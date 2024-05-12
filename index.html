@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- Ensured mobile-friendly viewport -->
+<title>Mother's Day Cube</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap'); /* Decorative font */
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        margin: 0;
+        background-color: black;
+        background-image: url('https://static7.depositphotos.com/1006137/690/i/450/depositphotos_6908971-stock-photo-red-background.jpg'); /* Background image */
+        background-size: cover;
+        background-position: center;
+        font-family: 'Dancing Script', cursive; /* More artistic font */
+    }
+    #cube {
+        width: 200px;
+        height: 200px;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotate 10s infinite linear;
+    }
+    .face {
+        position: absolute;
+        width: 100%; /* Responsive width */
+        height: 100%; /* Responsive height */
+        background-size: cover;
+        background-position: center;
+    }
+    .front  { background-image: url('https://img.freepik.com/free-photo/happy-mothers-day-celebration_23-2151306256.jpg'); transform: rotateY(  0deg) translateZ(100px); }
+    .back   { background-image: url('https://img.freepik.com/premium-photo/happy-mothers-day-celebration-with-cheerful-cartoon-family-outdoors_1143476-2391.jpg'); transform: rotateY(180deg) translateZ(100px); }
+    .right  { background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm9IFnjzABUVrx-aj7psNTXvmMJlquBEc4dufzW_6HXA&s'); transform: rotateY( 90deg) translateZ(100px); }
+    .left   { background-image: url('https://i.kym-cdn.com/photos/images/original/002/363/271/b6c'); transform: rotateY(-90deg) translateZ(100px); }
+    @keyframes rotate {
+        from { transform: rotateY(0deg); }
+        to   { transform: rotateY(360deg); }
+    }
+    .message {
+        margin-top: 20px;
+        font-size: 36px; /* Larger text */
+        text-align: center;
+        color: #ffffff; /* White color for better visibility */
+        text-shadow: 2px 2px 4px #000000; /* Text shadow for depth */
+        font-family: 'Great Vibes', cursive; /* More decorative font */
+        background: -webkit-linear-gradient(white, pink); /* Gradient text */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent; /* Gradient text effect */
+    }
+</style>
+</head>
+<body>
+    <div id="cube">
+        <div class="face front"></div>
+        <div class="face back"></div>
+        <div class="face right"></div>
+        <div class="face left"></div>
+    </div>
+    <div class="message">Happy Mother's Day</div>
+</body>
+</html>
