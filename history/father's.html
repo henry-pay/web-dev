@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- Ensured mobile-friendly viewport -->
+<title>Father's Day Cube</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap'); /* Decorative font */
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        margin: 0;
+        background-color: black;
+        background-image: url('https://i.pinimg.com/474x/ec/5c/d9/ec5cd9f0428c94b39a271f0d73fa5e50.jpg'); /* Background image */
+        background-size: cover;
+        background-position: center;
+        font-family: 'Dancing Script', cursive; /* More artistic font */
+    }
+    #cube {
+        width: 200px;
+        height: 200px;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotate 10s infinite linear;
+    }
+    .face {
+        position: absolute;
+        width: 100%; /* Responsive width */
+        height: 100%; /* Responsive height */
+        background-size: cover;
+        background-position: center;
+    }
+    .front  { background-image: url('https://png.pngtree.com/png-vector/20240515/ourmid/pngtree-happy-fathers-day-png-image_12474741.png'); transform: rotateY(  0deg) translateZ(100px); }
+    .back   { background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/fd20b3a4-f143-4e81-95bf-7d2fcd7fff06/dhlgz7w-6a14ea14-7b0b-4c43-81c2-abdb5ccc4957.jpg/v1/fill/w_1024,h_1024,q_75,strp/happy_father_s_day_2024__2_by_paddy_one_dhlgz7w-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAyNCIsInBhdGgiOiJcL2ZcL2ZkMjBiM2E0LWYxNDMtNGU4MS05NWJmLTdkMmZjZDdmZmYwNlwvZGhsZ3o3dy02YTE0ZWExNC03YjBiLTRjNDMtODFjMi1hYmRiNWNjYzQ5NTcuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.-mpM4l3Sh5CxdoAdiENv50A4Ha_KqcEtcSJOHBrtMAk'); transform: rotateY(180deg) translateZ(100px); }
+    .right  { background-image: url('https://png.pngtree.com/png-vector/20240513/ourmid/pngtree-cartoon-illustration-of-father-hugging-daughter-happy-fathers-day-png-image_12459029.png'); transform: rotateY( 90deg) translateZ(100px); }
+    .left   { background-image: url('https://i.pinimg.com/474x/87/ab/c6/87abc6425ec317dc14d5595149cecea9.jpg'); transform: rotateY(-90deg) translateZ(100px); }
+    @keyframes rotate {
+        from { transform: rotateY(0deg); }
+        to   { transform: rotateY(360deg); }
+    }
+    .message {
+        margin-top: 20px;
+        font-size: 36px; /* Larger text */
+        text-align: center;
+        color: #ffffff; /* White color for better visibility */
+        text-shadow: 2px 2px 4px #000000; /* Text shadow for depth */
+        font-family: 'Great Vibes', cursive; /* More decorative font */
+        background: -webkit-linear-gradient(white, pink); /* Gradient text */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent; /* Gradient text effect */
+    }
+</style>
+</head>
+<body>
+    <div id="cube">
+        <div class="face front"></div>
+        <div class="face back"></div>
+        <div class="face right"></div>
+        <div class="face left"></div>
+    </div>
+    <div class="message">Happy Father's Day</div>
+</body>
+</html>
