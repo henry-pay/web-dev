@@ -2,8 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <!-- Prevent zooming and scrolling -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Happy Birthday E-Card</title>
   <style>
     /* ------------------------------
@@ -19,34 +18,14 @@
       height: 100%;
       font-family: 'Helvetica', sans-serif;
       background: #ffffff;
-      overflow: hidden; /* Deactivate scrolling */
-      touch-action: none; /* Prevent touch-driven scrolling */
+      overflow: hidden; /* Prevent scrolling */
     }
-    
-    /* Responsive adjustments for mobile screens */
-    @media (max-width: 768px) {
-      .message {
-        font-size: 36px;
-      }
-      .paragraph-box {
-        font-size: 1rem;
-      }
-      /* For mobile, the inside pages container will be a slider */
-      .flip-card-back {
-        width: 200%;
-        transition: transform 0.5s ease;
-      }
-      /* Each inside page takes full viewport width */
-      .left-page, .right-page {
-        width: 100%;
-      }
-    }
-    
+
     /* ------------------------------
        2) CARD CONTAINER & STRUCTURE
     ------------------------------ */
     .flip-card {
-      width: 100vw;
+      width: 100%;
       height: 100vh;
       perspective: 1000px; /* For 3D effect */
       overflow: hidden;
@@ -57,7 +36,7 @@
       height: 100%;
       position: relative;
     }
-    
+
     /* FRONT COVER – remains a 3-row grid */
     .flip-card-front {
       position: absolute;
@@ -70,11 +49,12 @@
       display: grid;
       grid-template-rows: 33.33% 33.33% 33.33%;
       z-index: 2;
+      /* Prepare for flip from left bottom */
       transform-origin: left bottom;
       transform: rotateY(0deg);
       transition: transform 0.8s ease-in-out;
     }
-    
+
     /* INSIDE PAGES – hidden by default */
     .flip-card-back {
       position: absolute;
@@ -85,10 +65,11 @@
       left: 0;
       display: none;
       background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
+      /* Entire inside flips as one */
       transform-origin: right bottom;
       transition: transform 0.8s ease-in-out;
     }
-    
+
     /* ------------------------------
        3) FRONT COVER STYLES
     ------------------------------ */
@@ -159,7 +140,7 @@
       background-color: #ff3377;
       box-shadow: 0 4px 12px rgba(255, 51, 119, 0.3);
     }
-    
+
     /* ------------------------------
        4) CONFETTI STYLES
     ------------------------------ */
@@ -184,7 +165,7 @@
         opacity: 0;
       }
     }
-    
+
     /* ------------------------------
        5) ARROW INDICATORS (MOBILE)
     ------------------------------ */
@@ -199,7 +180,7 @@
         border-radius: 50%;
         width: 50px;
         height: 50px;
-        display: none;
+        display: none; /* Hide arrows by default */
         align-items: center;
         justify-content: center;
         z-index: 10;
@@ -207,6 +188,12 @@
         cursor: pointer;
         opacity: 0.9;
         transform: translateY(-50%);
+    }
+
+    @media (max-width: 768px) {
+      .arrow {
+        display: flex;
+      }
     }
     /* Position the right arrow inside the left page */
     .left-page .arrow.arrow-right {
@@ -216,10 +203,11 @@
     .right-page .arrow.arrow-left {
       left: 10px;
     }
-    
+
     /* ------------------------------
        6) INSIDE PAGES – LEFT & RIGHT
     ------------------------------ */
+    /* Arrange pages side by side */
     .flip-card-back {
       display: flex;
     }
@@ -229,6 +217,7 @@
       overflow: hidden;
       position: relative;
     }
+
     /* LEFT PAGE – two images covering top & bottom halves,
        with the close button overlaid in the center */
     .left-page {
@@ -246,14 +235,7 @@
       transform: translate(-50%, -50%);
       z-index: 5;
     }
-    /* Make left page images responsive */
-    .left-page .left-section.top img,
-    .left-page .left-section.bottom img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
+
     /* RIGHT PAGE – 75% for image, 25% for text */
     .right-page {
       display: grid;
@@ -284,6 +266,19 @@
       color: #fff;
       max-width: 80%;
       margin: 0 auto;
+    }
+
+    /* ------------------------------
+       7) MOBILE – SLIDING ANIMATION BETWEEN PAGES
+    ------------------------------ */
+    @media (max-width: 768px) {
+      .flip-card-back {
+        width: 200%;
+        transition: transform 0.5s ease;
+      }
+      .left-page, .right-page {
+        width: 50%;
+      }
     }
   </style>
 </head>
@@ -323,13 +318,14 @@
       <div class="flip-card-back" id="flipCardBack">
         <!-- LEFT PAGE -->
         <div class="left-page">
-          <!-- Arrow for sliding to the right page (visible on mobile) -->
+          <!-- Arrow for sliding to the right page -->
           <div class="arrow arrow-right" id="arrowRight">&#x21E8;</div>
           <!-- Top half image -->
           <div class="left-section top">
             <img
               src="https://png.pngtree.com/background/20230525/original/pngtree-anime-girl-holding-a-box-with-christmas-decorations-picture-image_2738283.jpg"
               alt="Left Page Top Image"
+              style="width: 736px; height: 489px; object-fit: cover;"
             >
           </div>
           <!-- Middle: overlaid button to close the book -->
@@ -346,7 +342,7 @@
         </div>
         <!-- RIGHT PAGE -->
         <div class="right-page">
-          <!-- Arrow for sliding to the left page (visible on mobile) -->
+          <!-- Arrow for sliding to the left page -->
           <div class="arrow arrow-left" id="arrowLeft">&#x21E6;</div>
           <!-- Top row: image (75%) -->
           <div class="right-section">
@@ -365,7 +361,7 @@
           </div>
         </div>
       </div>
-      <!-- End INSIDE PAGES -->
+      <!-- End INSIDE -->
     </div>
   </div>
 
@@ -434,13 +430,18 @@
     function openBook() {
       const front = document.getElementById('frontCover');
       const back = document.getElementById('flipCardBack');
+      // Animate front cover: rotate from 0deg to -90deg (flipping away)
       front.style.transition = "transform 0.8s ease-in-out";
       front.style.transform = "rotateY(-90deg)";
+      // After the front flip finishes, hide front and show inside
       setTimeout(() => {
         front.style.display = "none";
+        // Prepare inside: set initial state rotated 90deg (closed)
         back.style.display = "flex";
         back.style.transform = "rotateY(90deg)";
+        // Animate inside from 90deg to 0deg (opening)
         back.style.transition = "transform 0.8s ease-in-out";
+        // A short timeout to force reflow
         setTimeout(() => {
           back.style.transform = "rotateY(0deg)";
         }, 50);
@@ -450,13 +451,17 @@
     function closeBook() {
       const front = document.getElementById('frontCover');
       const back = document.getElementById('flipCardBack');
+      // Animate inside: rotate from 0deg to 90deg (closing)
       back.style.transition = "transform 0.8s ease-in-out";
       back.style.transform = "rotateY(90deg)";
+      // After the inside flip finishes, hide inside and show front
       setTimeout(() => {
         back.style.display = "none";
         front.style.display = "grid";
+        // Prepare front: set initial state rotated -90deg (closed)
         front.style.transform = "rotateY(-90deg)";
         front.style.transition = "transform 0.8s ease-in-out";
+        // Animate front from -90deg to 0deg (opening)
         setTimeout(() => {
           front.style.transform = "rotateY(0deg)";
         }, 50);
@@ -467,9 +472,11 @@
        5) MOBILE PAGE SLIDING (SWIPE & ARROW CLICKS)
     --------------------------------------------------------- */
     window.addEventListener('DOMContentLoaded', () => {
+      // Ensure inside pages remain hidden until opened
       const flipCardBack = document.getElementById('flipCardBack');
       flipCardBack.style.display = "none";
 
+      // Create confetti
       createConfetti();
 
       // Build "HAPPY BIRTHDAY" letter spans
@@ -486,6 +493,7 @@
         startLetterAnimation(chars);
       }
 
+      // Match widths when images load or window resizes
       const topImage = document.getElementById('topImage');
       if (topImage.complete) {
         matchElementsToTopImage();
@@ -494,59 +502,48 @@
       }
       window.addEventListener('resize', matchElementsToTopImage);
 
+      // Attach event handlers for book flip animations
       document.getElementById('openCardBtn').addEventListener('click', openBook);
       document.getElementById('closeCardBtn').addEventListener('click', closeBook);
 
-      // Helper function to determine if the device is mobile
-      function isMobile() {
-        return window.innerWidth <= 768;
-      }
-
-      // Set up mobile sliding variables:
+      // Set up mobile sliding
       let startX = 0;
-      // currentTranslate: 0 means left page is visible; 
-      // if mobile then -100% for right page, else -50% if both pages are visible.
-      let currentTranslate = 0;
-      
+      let currentTranslate = 0; // 0 for left page, -50 for right page
+
       flipCardBack.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
       });
-      
+
       flipCardBack.addEventListener('touchend', (e) => {
         const endX = e.changedTouches[0].clientX;
         const diffX = endX - startX;
         const sliderThreshold = 50;
-        // Determine translation percent based on screen size:
-        const targetTranslate = isMobile() ? -100 : -50;
         if (Math.abs(diffX) > sliderThreshold) {
-          currentTranslate = diffX < 0 ? targetTranslate : 0;
+          currentTranslate = diffX < 0 ? -50 : 0;
           flipCardBack.style.transform = 'translateX(' + currentTranslate + '%)';
         }
       });
-      
+
+      // Arrow click events to switch pages
       const arrowRight = document.getElementById('arrowRight');
       const arrowLeft = document.getElementById('arrowLeft');
-      
+
       arrowRight.addEventListener('click', () => {
-        const targetTranslate = isMobile() ? -100 : -50;
-        if (currentTranslate !== targetTranslate) {
-          currentTranslate = targetTranslate;
-          flipCardBack.style.transform = 'translateX(' + targetTranslate + '%)';
+        // When right arrow is clicked on left page, slide to right page.
+        if (currentTranslate !== -50) {
+          currentTranslate = -50;
+          flipCardBack.style.transform = 'translateX(-50%)';
         }
       });
-      
+
       arrowLeft.addEventListener('click', () => {
+        // When left arrow is clicked on right page, slide back to left page.
         if (currentTranslate !== 0) {
           currentTranslate = 0;
           flipCardBack.style.transform = 'translateX(0%)';
         }
       });
     });
-
-    // Prevent default touchmove scrolling behavior across the document
-    document.addEventListener('touchmove', function(e) {
-      e.preventDefault();
-    }, { passive: false });
   </script>
 </body>
 </html>
