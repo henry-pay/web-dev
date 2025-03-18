@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Happy Birthday E-Card</title>
   <style>
-    /* ------------------------------
+    /* ------------------------------------------------------------
        1) BASIC RESET & FONTS
-    ------------------------------ */
+    ------------------------------------------------------------ */
     * {
       margin: 0;
       padding: 0;
@@ -15,10 +15,10 @@
     }
     html, body {
       width: 100%;
-      height: 100%;
+      height: 100vh;      /* Lock the body to 100vh */
+      overflow: hidden;   /* Prevent scrolling */
       font-family: 'Helvetica', sans-serif;
       background: #ffffff;
-      overflow: hidden; /* Prevent scrolling */
     }
     /* Global responsive image rule */
     img {
@@ -27,15 +27,15 @@
       display: block;
     }
 
-    /* ------------------------------
+    /* ------------------------------------------------------------
        2) CARD CONTAINER & STRUCTURE
-    ------------------------------ */
+    ------------------------------------------------------------ */
     .flip-card {
       width: 100%;
       height: 100vh;
       perspective: 1000px; /* For 3D effect */
-      overflow: hidden;
       position: relative;
+      overflow: hidden;     /* Prevent internal scroll */
     }
     .flip-card-inner {
       width: 100%;
@@ -69,16 +69,16 @@
       backface-visibility: hidden;
       top: 0;
       left: 0;
-      display: none;
-      background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
+      display: none; /* Hide inside pages until opened */
+      background: none; /* We'll remove the gradient here */
       /* Entire inside flips as one */
       transform-origin: right bottom;
       transition: transform 0.8s ease-in-out;
     }
 
-    /* ------------------------------
+    /* ------------------------------------------------------------
        3) FRONT COVER STYLES
-    ------------------------------ */
+    ------------------------------------------------------------ */
     .front-section {
       display: flex;
       justify-content: center;
@@ -145,9 +145,9 @@
       box-shadow: 0 4px 12px rgba(255, 51, 119, 0.3);
     }
 
-    /* ------------------------------
+    /* ------------------------------------------------------------
        4) CONFETTI STYLES
-    ------------------------------ */
+    ------------------------------------------------------------ */
     .confetti {
       position: absolute;
       top: 0;
@@ -170,9 +170,9 @@
       }
     }
 
-    /* ------------------------------
+    /* ------------------------------------------------------------
        5) ARROW INDICATORS (MOBILE)
-    ------------------------------ */
+    ------------------------------------------------------------ */
     .arrow {
       position: absolute;
       top: 50%;
@@ -193,8 +193,6 @@
       opacity: 0.9;
       transform: translateY(-50%);
     }
-
-    /* Position the arrows in their respective pages */
     .left-page .arrow.arrow-right {
       right: 10px;
     }
@@ -202,124 +200,12 @@
       left: 10px;
     }
 
-    @media (max-width: 768px) {
-      .arrow {
-        display: flex;
-      }
-      html, body {
-        overflow: hidden; /* Prevent body scroll */
-        height: 100%;
-      }
-
-      /* Adjust flip card container for mobile */
-      .flip-card {
-        height: 100vh;
-      }
-
-      /* Adjust flip-card-inner for mobile */
-      .flip-card-inner {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
-        transform: rotateY(0deg);
-      }
-
-      /* Adjust front cover */
-      .flip-card-front {
-        display: grid;
-        grid-template-rows: 30% 40% 30%;
-        transform: rotateY(0deg);
-      }
-
-      /* Ensure the front image takes full width */
-      .front-section img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-      }
-
-      /* Adjust message box */
-      .message-box {
-        padding: 15px;
-        width: 90%;
-      }
-
-      .message {
-        font-size: 28px; /* Adjust font size for smaller screens */
-      }
-
-      /* Button Styling */
-      button {
-        padding: 10px 20px;
-        font-size: 16px;
-      }
-
-      /* Adjust flip card back for smaller screens */
-      .flip-card-back {
-        width: 200%;
-        display: flex;
-        flex-direction: row;
-        transition: transform 0.5s ease;
-      }
-
-      /* Use a flex layout for the left page to allow a gap */
-      .left-page {
-        display: flex;
-        flex-direction: column;
-        gap: 10px; /* Adjust the gap between images as needed */
-        height: 100%;
-      }
-
-      /* Remove the grid-template-rows if not needed */
-      /* Make each section take equal available height */
-      .left-page .left-section.top,
-      .left-page .left-section.bottom {
-        flex: 1;
-        /* Remove any fixed height so that they scale with the container */
-      }
-
-      /* Force images to fill their containers while preserving aspect ratio */
-      .left-page img, 
-      .right-page img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover;
-      }
-
-      /* Fix the text for the right page */
-      .right-page {
-        grid-template-rows: 40% 60%;
-        padding: 5px; /* Optional: adjust overall padding */
-      }
-
-      /* Update the right section styling */
-      .right-section {
-        padding: 10px;
-        text-align: center;
-      }
-
-      /* Resize the text box to better fit mobile screens */
-      .paragraph-box {
-        padding: 10px;
-        font-size: 14px;
-        max-width: 95%; /* Increase the available width */
-        margin: 0 auto;
-        box-sizing: border-box;
-      }
-
-      /* Adjust mobile page sliding for swiping */
-      .flip-card-back {
-        transform: translateX(0);
-      }
-    }
-
-    /* ------------------------------
+    /* ------------------------------------------------------------
        6) INSIDE PAGES – LEFT & RIGHT
-    ------------------------------ */
+    ------------------------------------------------------------ */
     /* Arrange pages side by side */
     .flip-card-back {
-      display: flex;
+      display: flex; /* We'll use flex to place left & right side by side */
     }
     .left-page, .right-page {
       flex: 1;
@@ -346,11 +232,13 @@
       z-index: 5;
     }
 
-    /* RIGHT PAGE – originally 75% image, 25% text; mobile now adjusted */
+    /* RIGHT PAGE – default: 75% image, 25% text */
     .right-page {
       display: grid;
       grid-template-rows: 75% 25%;
       transform-origin: left bottom;
+      /* Add your background gradient so it shows up on the right page */
+      background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
     }
     .right-section {
       display: flex;
@@ -376,6 +264,107 @@
       color: #fff;
       max-width: 80%;
       margin: 0 auto;
+    }
+
+    /* ------------------------------------------------------------
+       7) MOBILE STYLES
+    ------------------------------------------------------------ */
+    @media (max-width: 768px) {
+      .arrow {
+        display: flex;
+      }
+      /* Make sure no scroll on mobile */
+      html, body {
+        overflow: hidden;
+        height: 100vh;
+      }
+      .flip-card {
+        height: 100vh;
+      }
+      .flip-card-inner {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100vh;
+        transform: rotateY(0deg);
+      }
+      /* Adjust front cover for smaller screens */
+      .flip-card-front {
+        display: grid;
+        grid-template-rows: 30% 40% 30%;
+        transform: rotateY(0deg);
+      }
+      .front-section img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+      .message-box {
+        padding: 15px;
+        width: 90%;
+      }
+      .message {
+        font-size: 28px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+
+      /* Adjust inside pages for mobile sliding */
+      .flip-card-back {
+        width: 200%;
+        display: flex;
+        flex-direction: row;
+        transition: transform 0.5s ease;
+        transform: translateX(0); /* Start with left page in view */
+        background: none; /* Remove background so left page images fill the screen */
+      }
+      .left-page, .right-page {
+        flex: 1;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+      }
+      .left-page img, 
+      .right-page img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+      }
+
+      /* 
+         We now make the right page a simple column: 
+         first child is the image, second child is the text box.
+      */
+      .right-page {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;  /* stack from top down */
+        align-items: center;
+        background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
+        padding: 0;
+      }
+      .right-page .right-section {
+        width: 100%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .paragraph-box {
+        margin-top: 0;
+        padding: 10px;
+        font-size: 14px;
+        max-width: 95%;
+        box-sizing: border-box;
+      }
+      /* Force the image to auto-height so text box follows right underneath */
+      .right-section img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
     }
   </style>
 </head>
@@ -440,14 +429,14 @@
         <div class="right-page">
           <!-- Arrow for sliding to the left page -->
           <div class="arrow arrow-left" id="arrowLeft">&#x21E6;</div>
-          <!-- Top row: image (75% originally, adjusted on mobile) -->
+          <!-- First: the image -->
           <div class="right-section">
             <img
               src="https://img.freepik.com/free-photo/cartoon-people-celebrating-birthday-party_23-2151556546.jpg"
               alt="Right Page Top Image"
             >
           </div>
-          <!-- Bottom row: text (25% originally, now increased on mobile) -->
+          <!-- Second: the text box, directly below the image -->
           <div class="right-section">
             <div class="paragraph-box">
               <p class="birthday-wish">
@@ -535,7 +524,6 @@
         // Prepare inside: set initial state rotated 90deg (closed)
         back.style.display = "flex";
         back.style.transform = "rotateY(90deg)";
-        // Animate inside from 90deg to 0deg (opening)
         back.style.transition = "transform 0.8s ease-in-out";
         // A short timeout to force reflow
         setTimeout(() => {
@@ -554,7 +542,6 @@
       setTimeout(() => {
         back.style.display = "none";
         front.style.display = "grid";
-        // Prepare front: set initial state rotated -90deg (closed)
         front.style.transform = "rotateY(-90deg)";
         front.style.transition = "transform 0.8s ease-in-out";
         // Animate front from -90deg to 0deg (opening)
@@ -584,9 +571,8 @@
         span.textContent = (c === ' ' ? '\u00A0' : c);
         messageElem.appendChild(span);
       }
-      const chars = document.querySelectorAll('.char');
-      // Uncomment the next line to start letter animation
-      // startLetterAnimation(chars);
+      // If you want the letters to animate, uncomment the next line:
+      // startLetterAnimation(document.querySelectorAll('.char'));
 
       // Match widths when images load or window resizes
       const topImage = document.getElementById('topImage');
