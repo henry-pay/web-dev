@@ -1,630 +1,704 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Happy Birthday E-Card</title>
-  <style>
-    /* ------------------------------------------------------------
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday E-Card</title>
+    <style>
+      /* ------------------------------------------------------------
        1) BASIC RESET & FONTS
     ------------------------------------------------------------ */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      width: 100%;
-      height: 100vh;      /* Lock the body to 100vh */
-      overflow: hidden;   /* Prevent scrolling */
-      font-family: 'Helvetica', sans-serif;
-      background: #ffffff;
-    }
-    /* Global responsive image rule */
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100vh; /* Lock the body to 100vh */
+        overflow: hidden; /* Prevent scrolling */
+        font-family: "Helvetica", sans-serif;
+        background: #ffffff;
+      }
+      /* Global responsive image rule */
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
 
-    /* ------------------------------------------------------------
+      /* ------------------------------------------------------------
        2) CARD CONTAINER & STRUCTURE
     ------------------------------------------------------------ */
-    .flip-card {
-      width: 100%;
-      height: 100vh;
-      perspective: 1000px; /* For 3D effect */
-      position: relative;
-      overflow: hidden;     /* Prevent internal scroll */
-    }
-    .flip-card-inner {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-
-    /* FRONT COVER – remains a 3-row grid */
-    .flip-card-front {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      top: 0;
-      left: 0;
-      background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
-      display: grid;
-      grid-template-rows: 33.33% 33.33% 33.33%;
-      z-index: 2;
-      /* Prepare for flip from left bottom */
-      transform-origin: left bottom;
-      transform: rotateY(0deg);
-      transition: transform 0.8s ease-in-out;
-    }
-
-    /* INSIDE PAGES – hidden by default */
-    .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      top: 0;
-      left: 0;
-      display: none; /* Hide inside pages until opened */
-      background: none; /* We'll remove the gradient here */
-      /* Entire inside flips as one */
-      transform-origin: right bottom;
-      transition: transform 0.8s ease-in-out;
-    }
-
-    /* ------------------------------------------------------------
-       3) FRONT COVER STYLES
-    ------------------------------------------------------------ */
-    .front-section {
-      display: flex;
-      justify-content: center;
-    }
-    .top-section-front {
-      align-items: flex-start;
-    }
-    .middle-section-front {
-      align-items: center;
-      position: relative;
-    }
-    .bottom-section-front {
-      align-items: flex-end;
-    }
-    .front-section img {
-      max-height: 100%;
-      object-fit: contain;
-    }
-    .message-box {
-      background-color: #b71c1c;
-      color: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-    }
-    .message {
-      font-family: 'Brush Script MT', cursive;
-      font-size: 48px;
-      white-space: nowrap;
-      margin-bottom: 20px;
-      height: 60px;
-      line-height: 60px;
-      position: relative;
-      overflow: hidden;
-    }
-    .char {
-      display: inline-block;
-      position: relative;
-    }
-    @keyframes letterJump {
-      0%   { transform: translateY(0); }
-      20%  { transform: translateY(-30px); }
-      40%  { transform: translateY(0); }
-      60%  { transform: translateY(-15px); }
-      80%  { transform: translateY(0); }
-      100% { transform: translateY(0); }
-    }
-    .jump {
-      animation: letterJump 1s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
-    }
-    button {
-      background-color: #ff6699;
-      color: #ffffff;
-      border: none;
-      border-radius: 25px;
-      padding: 12px 24px;
-      font-size: 18px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
-      transition: background-color 0.3s, box-shadow 0.3s;
-    }
-    button:hover {
-      background-color: #ff3377;
-      box-shadow: 0 4px 12px rgba(255, 51, 119, 0.3);
-    }
-
-    /* ------------------------------------------------------------
-       4) CONFETTI STYLES
-    ------------------------------------------------------------ */
-    .confetti {
-      position: absolute;
-      top: 0;
-      width: 10px;
-      height: 10px;
-      border-radius: 2px;
-      opacity: 0.8;
-      animation: fall linear infinite;
-      pointer-events: none;
-      z-index: 2;
-    }
-    @keyframes fall {
-      0% {
-        transform: translateY(-10vh) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(110vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    /* ------------------------------------------------------------
-       5) ARROW INDICATORS (MOBILE)
-    ------------------------------------------------------------ */
-    .arrow {
-      position: absolute;
-      top: 50%;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #fff;
-      background: rgba(0, 0, 0, 0.7);
-      border: 2px solid #fff;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: none; /* Hide arrows by default */
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      pointer-events: auto;
-      cursor: pointer;
-      opacity: 0.9;
-      transform: translateY(-50%);
-    }
-    .left-page .arrow.arrow-right {
-      right: 10px;
-    }
-    .right-page .arrow.arrow-left {
-      left: 10px;
-    }
-
-    /* ------------------------------------------------------------
-       6) INSIDE PAGES – LEFT & RIGHT
-    ------------------------------------------------------------ */
-    /* Arrange pages side by side */
-    .flip-card-back {
-      display: flex; /* We'll use flex to place left & right side by side */
-    }
-    .left-page, .right-page {
-      flex: 1;
-      height: 100%;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* LEFT PAGE – two images covering top & bottom halves,
-       with the close button overlaid in the center */
-    .left-page {
-      display: block;
-    }
-    .left-page .left-section.top,
-    .left-page .left-section.bottom {
-      width: 100%;
-      height: 50%;
-    }
-    .left-page .left-section.middle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 5;
-    }
-
-    /* RIGHT PAGE – default: 75% image, 25% text */
-    .right-page {
-      display: grid;
-      grid-template-rows: 75% 25%;
-      transform-origin: left bottom;
-      /* Add your background gradient so it shows up on the right page */
-      background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
-    }
-    .right-section {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 10px;
-    }
-    .right-section img {
-      max-height: 100%;
-      max-width: 100%;
-      object-fit: contain;
-    }
-    .birthday-wish {
-      font-size: 1.2rem;
-      color: #fff;
-      font-family: 'Brush Script MT', cursive;
-    }
-    .paragraph-box {
-      background-color: rgba(183, 28, 28, 0.8);
-      border-radius: 12px;
-      padding: 20px;
-      color: #fff;
-      max-width: 80%;
-      margin: 0 auto;
-    }
-
-    /* ------------------------------------------------------------
-       7) MOBILE STYLES
-    ------------------------------------------------------------ */
-    @media (max-width: 768px) {
-      .arrow {
-        display: flex;
-      }
-      /* Make sure no scroll on mobile */
-      html, body {
-        overflow: hidden;
-        height: 100vh;
-      }
       .flip-card {
-        height: 100vh;
-      }
-      .flip-card-inner {
-        display: flex;
-        flex-direction: column;
         width: 100%;
         height: 100vh;
-        transform: rotateY(0deg);
+        perspective: 1000px; /* For 3D effect */
+        position: relative;
+        overflow: hidden; /* Prevent internal scroll */
       }
-      /* Adjust front cover for smaller screens */
+      .flip-card-inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+
+      /* FRONT COVER – remains a 3-row grid */
       .flip-card-front {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        top: 0;
+        left: 0;
+        background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
         display: grid;
-        grid-template-rows: 30% 40% 30%;
+        grid-template-rows: 33.33% 33.33% 33.33%;
+        z-index: 2;
+        /* Prepare for flip from left bottom */
+        transform-origin: left bottom;
         transform: rotateY(0deg);
+        transition: transform 0.8s ease-in-out;
+      }
+
+      /* INSIDE PAGES – hidden by default */
+      .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        top: 0;
+        left: 0;
+        display: none; /* Hide inside pages until opened */
+        background: none; /* We'll remove the gradient here */
+        /* Entire inside flips as one */
+        transform-origin: right bottom;
+        transition: transform 0.8s ease-in-out;
+      }
+
+      /* ------------------------------------------------------------
+       3) FRONT COVER STYLES
+    ------------------------------------------------------------ */
+      .front-section {
+        display: flex;
+        justify-content: center;
+      }
+      .top-section-front {
+        align-items: flex-start;
+      }
+      .middle-section-front {
+        align-items: center;
+        position: relative;
+      }
+      .bottom-section-front {
+        align-items: flex-end;
       }
       .front-section img {
-        max-width: 100%;
         max-height: 100%;
         object-fit: contain;
       }
       .message-box {
-        padding: 15px;
-        width: 90%;
+        background-color: #b71c1c;
+        color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
       }
       .message {
-        font-size: 28px;
+        font-family: "Brush Script MT", cursive;
+        font-size: 48px;
+        white-space: nowrap;
+        margin-bottom: 20px;
+        height: 60px;
+        line-height: 60px;
+        position: relative;
+        overflow: hidden;
+      }
+      .char {
+        display: inline-block;
+        position: relative;
+      }
+      @keyframes letterJump {
+        0% {
+          transform: translateY(0);
+        }
+        20% {
+          transform: translateY(-30px);
+        }
+        40% {
+          transform: translateY(0);
+        }
+        60% {
+          transform: translateY(-15px);
+        }
+        80% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+      .jump {
+        animation: letterJump 1s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
       }
       button {
-        padding: 10px 20px;
-        font-size: 16px;
+        background-color: #ff6699;
+        color: #ffffff;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 24px;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
+        transition: background-color 0.3s, box-shadow 0.3s;
+      }
+      button:hover {
+        background-color: #ff3377;
+        box-shadow: 0 4px 12px rgba(255, 51, 119, 0.3);
       }
 
-      /* Adjust inside pages for mobile sliding */
-      .flip-card-back {
-        width: 200%;
-        display: flex;
-        flex-direction: row;
-        transition: transform 0.5s ease;
-        transform: translateX(0); /* Start with left page in view */
-        background: none; /* Remove background so left page images fill the screen */
+      /* ------------------------------------------------------------
+       4) CONFETTI STYLES
+    ------------------------------------------------------------ */
+      .confetti {
+        position: absolute;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        opacity: 0.8;
+        animation: fall linear infinite;
+        pointer-events: none;
+        z-index: 2;
       }
-      .left-page, .right-page {
+      @keyframes fall {
+        0% {
+          transform: translateY(-10vh) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(110vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* ------------------------------------------------------------
+       5) ARROW INDICATORS (MOBILE)
+    ------------------------------------------------------------ */
+      .arrow {
+        position: absolute;
+        top: 50%;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.7);
+        border: 2px solid #fff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: none; /* Hide arrows by default */
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        pointer-events: auto;
+        cursor: pointer;
+        opacity: 0.9;
+        transform: translateY(-50%);
+      }
+      .left-page .arrow.arrow-right {
+        right: 10px;
+      }
+      .right-page .arrow.arrow-left {
+        left: 10px;
+      }
+
+      /* ------------------------------------------------------------
+       6) INSIDE PAGES – LEFT & RIGHT
+    ------------------------------------------------------------ */
+      /* Arrange pages side by side */
+      .flip-card-back {
+        display: flex; /* We'll use flex to place left & right side by side */
+      }
+      .left-page,
+      .right-page {
         flex: 1;
-        height: 100vh;
+        height: 100%;
         overflow: hidden;
         position: relative;
       }
-      .left-page img, 
-      .right-page img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover;
+
+      /* LEFT PAGE – two images covering top & bottom halves,
+       with the close button overlaid in the center */
+      .left-page {
+        display: block;
+      }
+      .left-page .left-section.top,
+      .left-page .left-section.bottom {
+        width: 100%;
+        height: 50%;
+      }
+      .left-page .left-section.middle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 5;
       }
 
-      /* 
-         We now make the right page a simple column: 
-         first child is the image, second child is the text box.
-      */
+      /* RIGHT PAGE – default: 75% image, 25% text */
+      .right-page {
+        display: grid;
+        grid-template-rows: 75% 25%;
+        transform-origin: left bottom;
+        /* Add your background gradient so it shows up on the right page */
+        background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
+      }
+      .right-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 10px;
+      }
+      .right-section img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+      }
+      .birthday-wish {
+        font-size: 1.2rem;
+        color: #fff;
+        font-family: "Brush Script MT", cursive;
+      }
+      .paragraph-box {
+        background-color: rgba(183, 28, 28, 0.8);
+        border-radius: 12px;
+        padding: 20px;
+        color: #fff;
+        max-width: 80%;
+        margin: 0 auto;
+      }
+
+      /* Updated right-page layout for desktop to mimic mobile */
       .right-page {
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;  /* stack from top down */
+        justify-content: flex-start;
         align-items: center;
         background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
         padding: 0;
       }
-      .right-page .right-section {
-        width: 100%;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+
+      /* Updated text box style for right-page */
       .paragraph-box {
-        margin-top: 0;
+        background-color: rgba(183, 28, 28, 0.8);
+        border-radius: 12px;
         padding: 10px;
         font-size: 14px;
+        color: #fff;
         max-width: 95%;
+        margin: 0 auto;
         box-sizing: border-box;
       }
-      /* Force the image to auto-height so text box follows right underneath */
-      .right-section img {
-        width: 100%;
-        height: auto;
-        object-fit: contain;
+
+      /* ------------------------------------------------------------
+       7) MOBILE STYLES
+    ------------------------------------------------------------ */
+      @media (max-width: 768px) {
+        .arrow {
+          display: flex;
+        }
+        /* Make sure no scroll on mobile */
+        html,
+        body {
+          overflow: hidden;
+          height: 100vh;
+        }
+        .flip-card {
+          height: 100vh;
+        }
+        .flip-card-inner {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 100vh;
+          transform: rotateY(0deg);
+        }
+        /* Adjust front cover for smaller screens */
+        .flip-card-front {
+          display: grid;
+          grid-template-rows: 30% 40% 30%;
+          transform: rotateY(0deg);
+        }
+        .front-section img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
+        .message-box {
+          padding: 15px;
+          width: 90%;
+        }
+        .message {
+          font-size: 28px;
+        }
+        button {
+          padding: 10px 20px;
+          font-size: 16px;
+        }
+
+        /* Adjust inside pages for mobile sliding */
+        .flip-card-back {
+          width: 200%;
+          display: flex;
+          flex-direction: row;
+          transition: transform 0.5s ease;
+          transform: translateX(0); /* Start with left page in view */
+          background: none; /* Remove background so left page images fill the screen */
+        }
+        .left-page,
+        .right-page {
+          flex: 1;
+          height: 100vh;
+          overflow: hidden;
+          position: relative;
+        }
+        .left-page img,
+        .right-page img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover;
+        }
+
+        /* 
+         We now make the right page a simple column: 
+         first child is the image, second child is the text box.
+      */
+        .right-page {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start; /* stack from top down */
+          align-items: center;
+          background: linear-gradient(to bottom, #ffccd5, #ffb3c1, #ff8fa3);
+          padding: 0;
+        }
+        .right-page .right-section {
+          width: 100%;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .paragraph-box {
+          margin-top: 0;
+          padding: 10px;
+          font-size: 14px;
+          max-width: 95%;
+          box-sizing: border-box;
+        }
+        /* Force the image to auto-height so text box follows right underneath */
+        .right-section img {
+          width: 100%;
+          height: auto;
+          object-fit: contain;
+        }
       }
-    }
-  </style>
-</head>
+    </style>
+  </head>
 
-<body>
-  <div class="flip-card" id="flipCard">
-    <div class="flip-card-inner">
-      <!-- FRONT COVER -->
-      <div class="flip-card-front" id="frontCover">
-        <!-- Top row -->
-        <div class="front-section top-section-front">
-          <img
-            id="topImage"
-            src="https://img.freepik.com/premium-photo/watercolor-illustration-three-girls-celebrating-birthday-with-cake_1282444-144914.jpg"
-            alt="Top Birthday Image"
-          >
-        </div>
-        <!-- Middle row -->
-        <div class="front-section middle-section-front">
-          <div class="message-box" id="messageBox">
-            <h1 class="message" id="birthdayMessage"></h1>
-            <!-- Front cover button to open the book -->
-            <button id="openCardBtn">点我</button>
+  <body>
+    <div class="flip-card" id="flipCard">
+      <div class="flip-card-inner">
+        <!-- FRONT COVER -->
+        <div class="flip-card-front" id="frontCover">
+          <!-- Top row -->
+          <div class="front-section top-section-front">
+            <img
+              id="topImage"
+              src="https://img.freepik.com/premium-photo/watercolor-illustration-three-girls-celebrating-birthday-with-cake_1282444-144914.jpg"
+              alt="Top Birthday Image"
+            />
+          </div>
+          <!-- Middle row -->
+          <div class="front-section middle-section-front">
+            <div class="message-box" id="messageBox">
+              <h1 class="message" id="birthdayMessage"></h1>
+              <!-- Front cover button to open the book -->
+              <button id="openCardBtn">点我</button>
+            </div>
+          </div>
+          <!-- Bottom row -->
+          <div class="front-section bottom-section-front">
+            <img
+              id="bottomImage"
+              src="https://img.freepik.com/premium-photo/anime-couple-kitchen-with-pancakes-syrup-table-generative-ai_958078-50765.jpg"
+              alt="Bottom Birthday Image"
+            />
           </div>
         </div>
-        <!-- Bottom row -->
-        <div class="front-section bottom-section-front">
-          <img
-            id="bottomImage"
-            src="https://img.freepik.com/premium-photo/anime-couple-kitchen-with-pancakes-syrup-table-generative-ai_958078-50765.jpg"
-            alt="Bottom Birthday Image"
-          >
-        </div>
-      </div>
 
-      <!-- INSIDE PAGES -->
-      <div class="flip-card-back" id="flipCardBack">
-        <!-- LEFT PAGE -->
-        <div class="left-page">
-          <!-- Arrow for sliding to the right page -->
-          <div class="arrow arrow-right" id="arrowRight">&#x21E8;</div>
-          <!-- Top half image -->
-          <div class="left-section top">
-            <img
-              src="https://png.pngtree.com/background/20230525/original/pngtree-anime-girl-holding-a-box-with-christmas-decorations-picture-image_2738283.jpg"
-              alt="Left Page Top Image"
-            >
+        <!-- INSIDE PAGES -->
+        <div class="flip-card-back" id="flipCardBack">
+          <!-- LEFT PAGE -->
+          <div class="left-page">
+            <!-- Arrow for sliding to the right page -->
+            <div class="arrow arrow-right" id="arrowRight">&#x21E8;</div>
+            <!-- Top half image -->
+            <div class="left-section top">
+              <img
+                src="https://png.pngtree.com/background/20230525/original/pngtree-anime-girl-holding-a-box-with-christmas-decorations-picture-image_2738283.jpg"
+                alt="Left Page Top Image"
+              />
+            </div>
+            <!-- Middle: overlaid button to close the book -->
+            <div class="left-section middle">
+              <button id="closeCardBtn">点我</button>
+            </div>
+            <!-- Bottom half image -->
+            <div class="left-section bottom">
+              <img
+                src="https://image.cdn2.seaart.me/temp-convert-webp/highwebp/2024-07-06/cq4ff2de878c73fqgjbg/861c0a8d6812b1947c681bbe3766aba5573eb5b5_low.webp"
+                alt="Left Page Bottom Image"
+              />
+            </div>
           </div>
-          <!-- Middle: overlaid button to close the book -->
-          <div class="left-section middle">
-            <button id="closeCardBtn">点我</button>
-          </div>
-          <!-- Bottom half image -->
-          <div class="left-section bottom">
-            <img
-              src="https://image.cdn2.seaart.me/temp-convert-webp/highwebp/2024-07-06/cq4ff2de878c73fqgjbg/861c0a8d6812b1947c681bbe3766aba5573eb5b5_low.webp"
-              alt="Left Page Bottom Image"
-            >
-          </div>
-        </div>
-        <!-- RIGHT PAGE -->
-        <div class="right-page">
-          <!-- Arrow for sliding to the left page -->
-          <div class="arrow arrow-left" id="arrowLeft">&#x21E6;</div>
-          <!-- First: the image -->
-          <div class="right-section">
-            <img
-              src="https://img.freepik.com/free-photo/cartoon-people-celebrating-birthday-party_23-2151556546.jpg"
-              alt="Right Page Top Image"
-            >
-          </div>
-          <!-- Second: the text box, directly below the image -->
-          <div class="right-section">
-            <div class="paragraph-box">
-              <p class="birthday-wish">
-                祝你度过一个充满幸福、欢笑和满满爱意的一天！愿你的生日如同你一般独特而美好，所有的梦想都能成真，所有的愿望都能实现。希望新的一岁带给你无尽的喜悦、健康和成功，身边永远围绕着爱你的人和温暖的祝福。
-              </p>
+          <!-- RIGHT PAGE -->
+          <div class="right-page">
+            <!-- Arrow for sliding to the left page -->
+            <div class="arrow arrow-left" id="arrowLeft">&#x21E6;</div>
+            <!-- First: the image -->
+            <div class="right-section">
+              <img
+                src="https://img.freepik.com/free-photo/cartoon-people-celebrating-birthday-party_23-2151556546.jpg"
+                alt="Right Page Top Image"
+              />
+            </div>
+            <!-- Second: the text box, directly below the image -->
+            <div class="right-section">
+              <div class="paragraph-box">
+                <p class="birthday-wish">
+                  祝君生辰之日，福泽绵长，笑靥如花，喜乐无疆。
+                  愿君此岁逢佳运，所愿皆成，所求皆遂。
+                  康健无恙，福禄盈门，亲友环侍，温情相伴。
+                  愿岁岁常欢愉，年年皆胜意！<br /><br />
+
+                  庭前花映月，座上寿星明。<br />
+                  愿祝身康健，福来万事兴。<br /><br />
+
+                  愿君此生安乐，福运绵长！
+                </p>
+              </div>
             </div>
           </div>
         </div>
+        <!-- End INSIDE -->
       </div>
-      <!-- End INSIDE -->
     </div>
-  </div>
 
-  <!-- JAVASCRIPT -->
-  <script>
-    /* ---------------------------------------------------------
+    <!-- JAVASCRIPT -->
+    <script>
+      /* ---------------------------------------------------------
        1) CONFETTI CREATION
     --------------------------------------------------------- */
-    function createConfetti() {
-      const confettiCount = 50;
-      for (let i = 0; i < confettiCount; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        confetti.style.top = '-10vh';
-        confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 80%)`;
-        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        confetti.style.animationDelay = Math.random() * 5 + 's';
-        document.body.appendChild(confetti);
+      function createConfetti() {
+        const confettiCount = 50;
+        for (let i = 0; i < confettiCount; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+          confetti.style.top = "-10vh";
+          confetti.style.left = Math.random() * 100 + "vw";
+          confetti.style.backgroundColor = `hsl(${
+            Math.random() * 360
+          }, 100%, 80%)`;
+          confetti.style.animationDuration = Math.random() * 3 + 2 + "s";
+          confetti.style.animationDelay = Math.random() * 5 + "s";
+          document.body.appendChild(confetti);
+        }
       }
-    }
 
-    /* ---------------------------------------------------------
+      /* ---------------------------------------------------------
        2) LETTER ANIMATION ("HAPPY BIRTHDAY")
     --------------------------------------------------------- */
-    function startLetterAnimation(chars) {
-      let current = 0;
-      function jumpNext() {
-        chars[current].classList.add('jump');
-        setTimeout(() => {
-          const next = (current + 1) % chars.length;
-          chars[next].classList.add('jump');
-        }, 300);
-        setTimeout(() => {
-          chars[current].classList.remove('jump');
-        }, 400);
-        setTimeout(() => {
-          const next = (current + 1) % chars.length;
-          chars[next].classList.remove('jump');
-          current = next;
-          jumpNext();
-        }, 500);
+      function startLetterAnimation(chars) {
+        let current = 0;
+        function jumpNext() {
+          chars[current].classList.add("jump");
+          setTimeout(() => {
+            const next = (current + 1) % chars.length;
+            chars[next].classList.add("jump");
+          }, 300);
+          setTimeout(() => {
+            chars[current].classList.remove("jump");
+          }, 400);
+          setTimeout(() => {
+            const next = (current + 1) % chars.length;
+            chars[next].classList.remove("jump");
+            current = next;
+            jumpNext();
+          }, 500);
+        }
+        jumpNext();
       }
-      jumpNext();
-    }
 
-    /* ---------------------------------------------------------
+      /* ---------------------------------------------------------
        3) MATCH RED BOX & BOTTOM IMAGE WIDTH TO TOP IMAGE
     --------------------------------------------------------- */
-    function matchElementsToTopImage() {
-      const topImage = document.getElementById('topImage');
-      const messageBox = document.getElementById('messageBox');
-      const bottomImage = document.getElementById('bottomImage');
-      if (topImage.offsetWidth > 0) {
-        const width = topImage.offsetWidth + 'px';
-        messageBox.style.width = width;
-        if (bottomImage) {
-          bottomImage.style.width = width;
+      function matchElementsToTopImage() {
+        const topImage = document.getElementById("topImage");
+        const messageBox = document.getElementById("messageBox");
+        const bottomImage = document.getElementById("bottomImage");
+        if (topImage.offsetWidth > 0) {
+          const width = topImage.offsetWidth + "px";
+          messageBox.style.width = width;
+          if (bottomImage) {
+            bottomImage.style.width = width;
+          }
         }
       }
-    }
 
-    /* ---------------------------------------------------------
+      /* ---------------------------------------------------------
        4) BOOK FLIP ANIMATIONS
     --------------------------------------------------------- */
-    function openBook() {
-      const front = document.getElementById('frontCover');
-      const back = document.getElementById('flipCardBack');
-      // Animate front cover: rotate from 0deg to -90deg (flipping away)
-      front.style.transition = "transform 0.8s ease-in-out";
-      front.style.transform = "rotateY(-90deg)";
-      // After the front flip finishes, hide front and show inside
-      setTimeout(() => {
-        front.style.display = "none";
-        // Prepare inside: set initial state rotated 90deg (closed)
-        back.style.display = "flex";
-        back.style.transform = "rotateY(90deg)";
-        back.style.transition = "transform 0.8s ease-in-out";
-        // A short timeout to force reflow
-        setTimeout(() => {
-          back.style.transform = "rotateY(0deg)";
-        }, 50);
-      }, 800);
-    }
-
-    function closeBook() {
-      const front = document.getElementById('frontCover');
-      const back = document.getElementById('flipCardBack');
-      // Animate inside: rotate from 0deg to 90deg (closing)
-      back.style.transition = "transform 0.8s ease-in-out";
-      back.style.transform = "rotateY(90deg)";
-      // After the inside flip finishes, hide inside and show front
-      setTimeout(() => {
-        back.style.display = "none";
-        front.style.display = "grid";
-        front.style.transform = "rotateY(-90deg)";
+      function openBook() {
+        const front = document.getElementById("frontCover");
+        const back = document.getElementById("flipCardBack");
+        // Animate front cover: rotate from 0deg to -90deg (flipping away)
         front.style.transition = "transform 0.8s ease-in-out";
-        // Animate front from -90deg to 0deg (opening)
+        front.style.transform = "rotateY(-90deg)";
+        // After the front flip finishes, hide front and show inside
         setTimeout(() => {
-          front.style.transform = "rotateY(0deg)";
-        }, 50);
-      }, 800);
-    }
+          front.style.display = "none";
+          // Prepare inside: set initial state rotated 90deg (closed)
+          back.style.display = "flex";
+          back.style.transform = "rotateY(90deg)";
+          back.style.transition = "transform 0.8s ease-in-out";
+          // A short timeout to force reflow
+          setTimeout(() => {
+            back.style.transform = "rotateY(0deg)";
+          }, 50);
+        }, 800);
+      }
 
-    /* ---------------------------------------------------------
+      function closeBook() {
+        const front = document.getElementById("frontCover");
+        const back = document.getElementById("flipCardBack");
+        // Animate inside: rotate from 0deg to 90deg (closing)
+        back.style.transition = "transform 0.8s ease-in-out";
+        back.style.transform = "rotateY(90deg)";
+        // After the inside flip finishes, hide inside and show front
+        setTimeout(() => {
+          back.style.display = "none";
+          front.style.display = "grid";
+          front.style.transform = "rotateY(-90deg)";
+          front.style.transition = "transform 0.8s ease-in-out";
+          // Animate front from -90deg to 0deg (opening)
+          setTimeout(() => {
+            front.style.transform = "rotateY(0deg)";
+          }, 50);
+        }, 800);
+      }
+
+      /* ---------------------------------------------------------
        5) MOBILE PAGE SLIDING (SWIPE & ARROW CLICKS)
     --------------------------------------------------------- */
-    window.addEventListener('DOMContentLoaded', () => {
-      // Ensure inside pages remain hidden until opened
-      const flipCardBack = document.getElementById('flipCardBack');
-      flipCardBack.style.display = "none";
+      window.addEventListener("DOMContentLoaded", () => {
+        // Ensure inside pages remain hidden until opened
+        const flipCardBack = document.getElementById("flipCardBack");
+        flipCardBack.style.display = "none";
 
-      // Create confetti
-      createConfetti();
+        // Create confetti
+        createConfetti();
 
-      // Build "HAPPY BIRTHDAY" letter spans
-      const messageText = 'HAPPY BIRTHDAY';
-      const messageElem = document.getElementById('birthdayMessage');
-      for (let c of messageText) {
-        const span = document.createElement('span');
-        span.classList.add('char');
-        span.textContent = (c === ' ' ? '\u00A0' : c);
-        messageElem.appendChild(span);
-      }
-      // If you want the letters to animate, uncomment the next line:
-      // startLetterAnimation(document.querySelectorAll('.char'));
-
-      // Match widths when images load or window resizes
-      const topImage = document.getElementById('topImage');
-      if (topImage.complete) {
-        matchElementsToTopImage();
-      } else {
-        topImage.addEventListener('load', matchElementsToTopImage);
-      }
-      window.addEventListener('resize', matchElementsToTopImage);
-
-      // Attach event handlers for book flip animations
-      document.getElementById('openCardBtn').addEventListener('click', openBook);
-      document.getElementById('closeCardBtn').addEventListener('click', closeBook);
-
-      // Set up mobile sliding
-      let startX = 0;
-      let currentTranslate = 0; // 0 for left page, -50 for right page
-
-      flipCardBack.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-      });
-
-      flipCardBack.addEventListener('touchend', (e) => {
-        const endX = e.changedTouches[0].clientX;
-        const diffX = endX - startX;
-        const sliderThreshold = 50;
-        if (Math.abs(diffX) > sliderThreshold) {
-          currentTranslate = diffX < 0 ? -50 : 0;
-          flipCardBack.style.transform = 'translateX(' + currentTranslate + '%)';
+        // Build "HAPPY BIRTHDAY" letter spans
+        const messageText = "HAPPY BIRTHDAY";
+        const messageElem = document.getElementById("birthdayMessage");
+        for (let c of messageText) {
+          const span = document.createElement("span");
+          span.classList.add("char");
+          span.textContent = c === " " ? "\u00A0" : c;
+          messageElem.appendChild(span);
         }
-      });
+        // If you want the letters to animate, uncomment the next line:
+        // startLetterAnimation(document.querySelectorAll('.char'));
 
-      // Arrow click events to switch pages
-      const arrowRight = document.getElementById('arrowRight');
-      const arrowLeft = document.getElementById('arrowLeft');
-
-      arrowRight.addEventListener('click', () => {
-        // When right arrow is clicked on left page, slide to right page.
-        if (currentTranslate !== -50) {
-          currentTranslate = -50;
-          flipCardBack.style.transform = 'translateX(-50%)';
+        // Match widths when images load or window resizes
+        const topImage = document.getElementById("topImage");
+        if (topImage.complete) {
+          matchElementsToTopImage();
+        } else {
+          topImage.addEventListener("load", matchElementsToTopImage);
         }
-      });
+        window.addEventListener("resize", matchElementsToTopImage);
 
-      arrowLeft.addEventListener('click', () => {
-        // When left arrow is clicked on right page, slide back to left page.
-        if (currentTranslate !== 0) {
-          currentTranslate = 0;
-          flipCardBack.style.transform = 'translateX(0%)';
+        // Attach event handlers for book flip animations
+        document
+          .getElementById("openCardBtn")
+          .addEventListener("click", openBook);
+        document
+          .getElementById("closeCardBtn")
+          .addEventListener("click", closeBook);
+
+        // Set up mobile sliding
+        let startX = 0;
+        let currentTranslate = 0; // 0 for left page, -50 for right page
+
+        flipCardBack.addEventListener("touchstart", (e) => {
+          startX = e.touches[0].clientX;
+        });
+
+        flipCardBack.addEventListener("touchend", (e) => {
+          const endX = e.changedTouches[0].clientX;
+          const diffX = endX - startX;
+          const sliderThreshold = 50;
+          if (Math.abs(diffX) > sliderThreshold) {
+            currentTranslate = diffX < 0 ? -50 : 0;
+            flipCardBack.style.transform =
+              "translateX(" + currentTranslate + "%)";
+          }
+        });
+
+        // Arrow click events to switch pages
+        const arrowRight = document.getElementById("arrowRight");
+        const arrowLeft = document.getElementById("arrowLeft");
+
+        arrowRight.addEventListener("click", () => {
+          // When right arrow is clicked on left page, slide to right page.
+          if (currentTranslate !== -50) {
+            currentTranslate = -50;
+            flipCardBack.style.transform = "translateX(-50%)";
+          }
+        });
+
+        arrowLeft.addEventListener("click", () => {
+          // When left arrow is clicked on right page, slide back to left page.
+          if (currentTranslate !== 0) {
+            currentTranslate = 0;
+            flipCardBack.style.transform = "translateX(0%)";
+          }
+        });
+
+        function matchLeftPageImageSizes() {
+          const topImage = document.querySelector(
+            ".left-page .left-section.top img"
+          );
+          const bottomImage = document.querySelector(
+            ".left-page .left-section.bottom img"
+          );
+          if (topImage && bottomImage) {
+            const topWidth = topImage.offsetWidth;
+            if (topWidth > 0) {
+              bottomImage.style.width = topWidth + "px";
+            } else {
+              bottomImage.style.width = "100%";
+            }
+          }
         }
+
+        // Ensure images are fully loaded before matching sizes
+        window.addEventListener("load", matchLeftPageImageSizes);
+        window.addEventListener("resize", matchLeftPageImageSizes);
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
