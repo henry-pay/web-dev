@@ -20,6 +20,12 @@
       background: #ffffff;
       overflow: hidden; /* Prevent scrolling */
     }
+    /* Global responsive image rule */
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
 
     /* ------------------------------
        2) CARD CONTAINER & STRUCTURE
@@ -89,9 +95,7 @@
     }
     .front-section img {
       max-height: 100%;
-      max-width: 100%;
       object-fit: contain;
-      display: block;
     }
     .message-box {
       background-color: #b71c1c;
@@ -170,38 +174,144 @@
        5) ARROW INDICATORS (MOBILE)
     ------------------------------ */
     .arrow {
-        position: absolute;
-        top: 50%;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #fff;
-        background: rgba(0, 0, 0, 0.7);
-        border: 2px solid #fff;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        display: none; /* Hide arrows by default */
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        pointer-events: auto;
-        cursor: pointer;
-        opacity: 0.9;
-        transform: translateY(-50%);
+      position: absolute;
+      top: 50%;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: none; /* Hide arrows by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      pointer-events: auto;
+      cursor: pointer;
+      opacity: 0.9;
+      transform: translateY(-50%);
+    }
+
+    /* Position the arrows in their respective pages */
+    .left-page .arrow.arrow-right {
+      right: 10px;
+    }
+    .right-page .arrow.arrow-left {
+      left: 10px;
     }
 
     @media (max-width: 768px) {
       .arrow {
         display: flex;
       }
-    }
-    /* Position the right arrow inside the left page */
-    .left-page .arrow.arrow-right {
-      right: 10px;
-    }
-    /* Position the left arrow inside the right page */
-    .right-page .arrow.arrow-left {
-      left: 10px;
+      html, body {
+        overflow: hidden; /* Prevent body scroll */
+        height: 100%;
+      }
+
+      /* Adjust flip card container for mobile */
+      .flip-card {
+        height: 100vh;
+      }
+
+      /* Adjust flip-card-inner for mobile */
+      .flip-card-inner {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        transform: rotateY(0deg);
+      }
+
+      /* Adjust front cover */
+      .flip-card-front {
+        display: grid;
+        grid-template-rows: 30% 40% 30%;
+        transform: rotateY(0deg);
+      }
+
+      /* Ensure the front image takes full width */
+      .front-section img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+
+      /* Adjust message box */
+      .message-box {
+        padding: 15px;
+        width: 90%;
+      }
+
+      .message {
+        font-size: 28px; /* Adjust font size for smaller screens */
+      }
+
+      /* Button Styling */
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+
+      /* Adjust flip card back for smaller screens */
+      .flip-card-back {
+        width: 200%;
+        display: flex;
+        flex-direction: row;
+        transition: transform 0.5s ease;
+      }
+
+      /* Use a flex layout for the left page to allow a gap */
+      .left-page {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Adjust the gap between images as needed */
+        height: 100%;
+      }
+
+      /* Remove the grid-template-rows if not needed */
+      /* Make each section take equal available height */
+      .left-page .left-section.top,
+      .left-page .left-section.bottom {
+        flex: 1;
+        /* Remove any fixed height so that they scale with the container */
+      }
+
+      /* Force images to fill their containers while preserving aspect ratio */
+      .left-page img, 
+      .right-page img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+      }
+
+      /* Fix the text for the right page */
+      .right-page {
+        grid-template-rows: 40% 60%;
+        padding: 5px; /* Optional: adjust overall padding */
+      }
+
+      /* Update the right section styling */
+      .right-section {
+        padding: 10px;
+        text-align: center;
+      }
+
+      /* Resize the text box to better fit mobile screens */
+      .paragraph-box {
+        padding: 10px;
+        font-size: 14px;
+        max-width: 95%; /* Increase the available width */
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      /* Adjust mobile page sliding for swiping */
+      .flip-card-back {
+        transform: translateX(0);
+      }
     }
 
     /* ------------------------------
@@ -236,7 +346,7 @@
       z-index: 5;
     }
 
-    /* RIGHT PAGE – 75% for image, 25% for text */
+    /* RIGHT PAGE – originally 75% image, 25% text; mobile now adjusted */
     .right-page {
       display: grid;
       grid-template-rows: 75% 25%;
@@ -266,107 +376,6 @@
       color: #fff;
       max-width: 80%;
       margin: 0 auto;
-    }
-
-    /* ------------------------------
-       7) MOBILE – SLIDING ANIMATION BETWEEN PAGES
-    ------------------------------ */
-    @media (max-width: 768px) {
-      /* .flip-card-back {
-        width: 200%;
-        transition: transform 0.5s ease;
-      }
-      .left-page, .right-page {
-        width: 50%;
-      } */
-      html, body {
-    overflow: hidden; /* Prevent body scroll */
-    height: 100%;
-  }
-
-  /* Flip card container should take up full screen */
-  .flip-card {
-    width: 100%;
-    height: 100vh;
-    perspective: 1000px; /* Keep 3D effect */
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* Adjust flip-card-inner for mobile */
-  .flip-card-inner {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    transform: rotateY(0deg);
-  }
-
-  /* Adjust front cover */
-  .flip-card-front {
-    display: grid;
-    grid-template-rows: 30% 40% 30%;
-    transform: rotateY(0deg);
-  }
-
-  /* Ensure the front image takes full width */
-  .front-section img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-
-  /* Adjust message box */
-  .message-box {
-    padding: 15px;
-    width: 90%;
-  }
-
-  .message {
-    font-size: 28px; /* Adjust font size for smaller screens */
-  }
-
-  /* Button Styling */
-  button {
-    padding: 10px 20px;
-    font-size: 16px;
-  }
-
-  /* Adjust flip card back for smaller screens */
-  .flip-card-back {
-    width: 200%;
-    display: flex;
-    flex-direction: row;
-    transition: transform 0.5s ease;
-  }
-
-  /* Adjust left and right pages to be full screen */
-  .left-page, .right-page {
-    flex: 1;
-    height: 100%;
-    grid-template-rows: 50% 50%;
-  }
-
-  .left-page img, .right-page img {
-    width: 100%;
-    object-fit: cover;
-  }
-
-  /* Fix the text for the right page */
-  .right-section {
-    padding: 10px;
-    text-align: center;
-  }
-
-  .paragraph-box {
-    padding: 15px;
-    font-size: 14px;
-  }
-
-  /* Adjust mobile page sliding for swiping */
-  .flip-card-back {
-    transform: translateX(0);
-  }
     }
   </style>
 </head>
@@ -413,7 +422,6 @@
             <img
               src="https://png.pngtree.com/background/20230525/original/pngtree-anime-girl-holding-a-box-with-christmas-decorations-picture-image_2738283.jpg"
               alt="Left Page Top Image"
-              style="width: 736px; height: 489px; object-fit: cover;"
             >
           </div>
           <!-- Middle: overlaid button to close the book -->
@@ -432,18 +440,18 @@
         <div class="right-page">
           <!-- Arrow for sliding to the left page -->
           <div class="arrow arrow-left" id="arrowLeft">&#x21E6;</div>
-          <!-- Top row: image (75%) -->
+          <!-- Top row: image (75% originally, adjusted on mobile) -->
           <div class="right-section">
             <img
               src="https://img.freepik.com/free-photo/cartoon-people-celebrating-birthday-party_23-2151556546.jpg"
               alt="Right Page Top Image"
             >
           </div>
-          <!-- Bottom row: text (25%) -->
+          <!-- Bottom row: text (25% originally, now increased on mobile) -->
           <div class="right-section">
             <div class="paragraph-box">
               <p class="birthday-wish">
-                祝你度过一个充满幸福、欢笑和满满爱意的一天！愿你的生日如同你一般独特而美好，所有的梦想都能成真，所有的愿望都能实现。希望新的一岁带给你无尽的喜悦、健康和成功，身边永远围绕着爱你的人和温暖的祝福。愿你的每一天都充满阳光与欢笑，未来的日子更加精彩纷呈！生日快乐！
+                祝你度过一个充满幸福、欢笑和满满爱意的一天！愿你的生日如同你一般独特而美好，所有的梦想都能成真，所有的愿望都能实现。希望新的一岁带给你无尽的喜悦、健康和成功，身边永远围绕着爱你的人和温暖的祝福。
               </p>
             </div>
           </div>
@@ -577,9 +585,8 @@
         messageElem.appendChild(span);
       }
       const chars = document.querySelectorAll('.char');
-      //if (chars.length > 0) {
-      //  startLetterAnimation(chars);
-      //}
+      // Uncomment the next line to start letter animation
+      // startLetterAnimation(chars);
 
       // Match widths when images load or window resizes
       const topImage = document.getElementById('topImage');
@@ -635,4 +642,3 @@
   </script>
 </body>
 </html>
-
